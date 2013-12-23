@@ -157,6 +157,7 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
     private static native int nativeGetDbLookaside(int connectionPtr);
     private static native void nativeCancel(int connectionPtr);
     private static native void nativeResetCancel(int connectionPtr, boolean cancelable);
+    private static native void nativeSetSeeKey(int connectionPtr, String key);
 
     private SQLiteConnection(SQLiteConnectionPool pool,
             SQLiteDatabaseConfiguration configuration,
@@ -210,6 +211,11 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         mConnectionPtr = nativeOpen(mConfiguration.path, mConfiguration.openFlags,
                 mConfiguration.label,
                 SQLiteDebug.DEBUG_SQL_STATEMENTS, SQLiteDebug.DEBUG_SQL_TIME);
+
+        if( mConfiguration.bSee ){
+          nativeSetSeeKey(mConnectionPtr, mConfiguration.seekey);
+          mConfiguration.setSeeKey(null);
+        }
 
         setPageSize();
         setForeignKeyModeFromConfiguration();
@@ -420,7 +426,7 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         mConfiguration.updateParametersFrom(configuration);
 
         // Update prepared statement cache size.
-        mPreparedStatementCache.resize(configuration.maxSqlCacheSize);
+        /* mPreparedStatementCache.resize(configuration.maxSqlCacheSize); */
 
         // Update foreign key mode.
         if (foreignKeyModeChanged) {

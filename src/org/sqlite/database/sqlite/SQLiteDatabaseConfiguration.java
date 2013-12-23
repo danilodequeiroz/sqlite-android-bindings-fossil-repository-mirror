@@ -89,6 +89,21 @@ public final class SQLiteDatabaseConfiguration {
     public final ArrayList<SQLiteCustomFunction> customFunctions =
             new ArrayList<SQLiteCustomFunction>();
 
+
+    /*
+    ** The following two variables are used by the SEE extension.
+    */
+    public boolean bSee;
+    public String seekey;
+
+    /*
+    ** Function to set SEE related variables.
+    */
+    public void setSeeKey(String key){
+      bSee = true;
+      seekey = key;
+    }
+
     /**
      * Creates a database configuration with the required parameters for opening a
      * database and default values for all other parameters.
@@ -108,6 +123,10 @@ public final class SQLiteDatabaseConfiguration {
         // Set default values for optional parameters.
         maxSqlCacheSize = 25;
         locale = Locale.getDefault();
+
+        // Set default values for SEE parameters (default is unencrypted).
+        bSee = false;
+        seekey = null;
     }
 
     /**
@@ -123,6 +142,9 @@ public final class SQLiteDatabaseConfiguration {
         this.path = other.path;
         this.label = other.label;
         updateParametersFrom(other);
+
+        this.bSee = other.bSee;
+        this.seekey = other.seekey;
     }
 
     /**

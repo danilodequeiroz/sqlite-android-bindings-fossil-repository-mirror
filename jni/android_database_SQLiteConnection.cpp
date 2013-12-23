@@ -853,6 +853,30 @@ static void nativeResetCancel(JNIEnv* env, jobject clazz, jint connectionPtr,
     }
 }
 
+static void nativeSetSeeKey(JNIEnv *pEnv, jobject clazz, jint connectionPtr, jstring zKey){
+  SQLiteConnection* p = reinterpret_cast<SQLiteConnection*>(connectionPtr);
+  sqlite3_stmt *pStmt = 0;
+  int rc;
+
+  const char *zUtf8 = pEnv->GetStringUTFChars(zKey, 0);
+  char *zSql = sqlite3_mprintf("PRAGMA key = '%q'", zUtf8);
+
+  ALOG(LOG_ERROR, SQLITE_TRACE_TAG, "nativeSetSeeKey: %s", zSql);
+
+  rc = sqlite3_prepare_v2(p->db, zSql, -1, &pStmt, 0);
+  if( rc==SQLITE_OK ){
+    sqlite3_step(pStmt);
+    rc = sqlite3_finalize(pStmt);
+  }
+  
+  pEnv->ReleaseStringUTFChars(zKey, zUtf8);
+  sqlite3_free(zSql);
+
+  if( rc!=SQLITE_OK ){
+    char *zErr = sqlite3_mprintf("nativeSetSeeKey %d \"%s\"", rc, sqlite3_errmsg(p->db));
+    throw_sqlite3_exception(pEnv, p->db, zErr);
+  }
+}
 
 static JNINativeMethod sMethods[] =
 {
@@ -909,6 +933,8 @@ static JNINativeMethod sMethods[] =
             (void*)nativeCancel },
     { "nativeResetCancel", "(IZ)V",
             (void*)nativeResetCancel },
+
+    { "nativeSetSeeKey", "(ILjava/lang/String;)V", (void*)nativeSetSeeKey },
 };
 
 #define FIND_CLASS(var, className) \

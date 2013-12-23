@@ -185,6 +185,8 @@ public final class SQLiteConnectionPool implements Closeable {
         mAvailablePrimaryConnection = openConnectionLocked(mConfiguration,
                 true /*primaryConnection*/); // might throw
 
+        mConfiguration.setSeeKey(null);
+
         // Mark the pool as being open for business.
         mIsOpen = true;
         mCloseGuard.open("close");

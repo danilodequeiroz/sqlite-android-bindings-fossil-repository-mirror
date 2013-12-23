@@ -696,6 +696,20 @@ public final class SQLiteDatabase extends SQLiteClosable {
         return db;
     }
 
+    public static SQLiteDatabase openSeeDatabase(
+      String path, 
+      String key, 
+      CursorFactory factory, 
+      int flags, 
+      DatabaseErrorHandler errorHandler
+    ){
+      SQLiteDatabase db = new SQLiteDatabase(path, flags, factory, errorHandler);
+      db.mConfigurationLocked.setSeeKey(key);
+      db.open();
+      db.mConfigurationLocked.setSeeKey(null);
+      return db;
+    }
+
     /**
      * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
      */
@@ -718,6 +732,7 @@ public final class SQLiteDatabase extends SQLiteClosable {
         return openDatabase(path, factory, CREATE_IF_NECESSARY, errorHandler);
     }
 
+
     /**
      * Deletes a database including its journal file and other auxiliary files
      * that may have been created by the database engine.
@@ -736,6 +751,8 @@ public final class SQLiteDatabase extends SQLiteClosable {
         deleted |= new File(file.getPath() + "-shm").delete();
         deleted |= new File(file.getPath() + "-wal").delete();
 
+        /* TODO: This is throwing a NullPointerException. Do not know why. */
+        /*
         File dir = file.getParentFile();
         if (dir != null) {
             final String prefix = file.getName() + "-mj";
@@ -749,6 +766,7 @@ public final class SQLiteDatabase extends SQLiteClosable {
                 deleted |= masterJournal.delete();
             }
         }
+        */
         return deleted;
     }
 
