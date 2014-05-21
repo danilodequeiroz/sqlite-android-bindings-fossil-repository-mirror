@@ -23,8 +23,8 @@ package org.sqlite.database.sqlite;
 import dalvik.system.CloseGuard;
 
 import org.sqlite.database.sqlite.SQLiteDebug.DbStats;
-import android.os.CancellationSignal;
-import android.os.OperationCanceledException;
+import org.sqlite.os.CancellationSignal;
+import org.sqlite.os.OperationCanceledException;
 import android.os.SystemClock;
 import android.util.Log;
 /* import android.util.PrefixPrinter; */

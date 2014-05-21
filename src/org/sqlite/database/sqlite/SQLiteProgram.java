@@ -21,7 +21,7 @@
 package org.sqlite.database.sqlite;
 
 import android.database.DatabaseUtils;
-import android.os.CancellationSignal;
+import org.sqlite.os.CancellationSignal;
 
 import java.util.Arrays;
 
