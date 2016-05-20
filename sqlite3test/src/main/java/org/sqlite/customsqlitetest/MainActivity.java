@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
     public void run_the_tests(View view){
         System.loadLibrary("sqliteX");
         DB_PATH = getApplicationContext().getDatabasePath("test.db");
-        DB_PATH.getParentFile().mkdirs();
+        DB_PATH.mkdirs();
 
         myTV.setText("");
         myNErr = 0;
