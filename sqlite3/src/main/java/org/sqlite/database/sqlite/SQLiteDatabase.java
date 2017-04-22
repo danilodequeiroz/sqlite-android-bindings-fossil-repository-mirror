@@ -23,7 +23,8 @@ package org.sqlite.database.sqlite;
 import android.content.ContentValues;
 import android.database.Cursor;
 import org.sqlite.database.DatabaseErrorHandler;
-import android.database.DatabaseUtils;
+// We use a local version of DatabaseUtils which implements methods not available in earlier APIs
+//import android.database.DatabaseUtils;
 import org.sqlite.database.ExtraUtils;
 import org.sqlite.database.DefaultDatabaseErrorHandler;
 import org.sqlite.database.SQLException;

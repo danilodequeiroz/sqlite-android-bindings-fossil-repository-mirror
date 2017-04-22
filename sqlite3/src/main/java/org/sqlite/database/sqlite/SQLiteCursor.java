@@ -145,11 +145,14 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     ** closeWindow(), which are used by the android.database.sqlite.* version of this
     ** class. But, since they are marked with "@hide", the following replacement 
     ** versions are required.
+    **
+    ** Note that we ignore the name since it seems to be cosmetic only, and is not
+    ** available in earlier API versions.
     */
     private void awc_clearOrCreateWindow(String name){
       CursorWindow win = getWindow();
       if( win==null ){
-        win = new CursorWindow(name);
+        win = new CursorWindow(true);
         setWindow(win);
       }else{
         win.clear();

@@ -21,18 +21,20 @@
 package org.sqlite.database.sqlite;
 
 /* import dalvik.system.BlockGuard; */
-import org.sqlite.database.sqlite.CloseGuard;
 
 import android.database.Cursor;
 import android.database.CursorWindow;
-import android.database.DatabaseUtils;
+// We use a local version of DatabaseUtils which implements methods not available in earlier APIs
+//import android.database.DatabaseUtils;
 import org.sqlite.database.ExtraUtils;
 import org.sqlite.database.sqlite.SQLiteDebug.DbStats;
 import org.sqlite.os.CancellationSignal;
 import org.sqlite.os.OperationCanceledException;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-import android.util.LruCache;
+// We use a local copy of LruCache which does not have the 'eldest' method of the
+// original, but uses an iterator to get first entry
+//import android.util.LruCache;
 import android.util.Printer;
 
 import java.text.SimpleDateFormat;
@@ -700,9 +702,13 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
                 applyBlockGuardPolicy(statement);
                 attachCancellationSignal(cancellationSignal);
                 try {
-                    int fd = nativeExecuteForBlobFileDescriptor(
-                            mConnectionPtr, statement.mStatementPtr);
-                    return fd >= 0 ? ParcelFileDescriptor.adoptFd(fd) : null;
+                    // The Sqlite Bindings version of this code is unable to
+                    // use shared memory (the C++ call to createAshmemRegionWithData
+                    // always fails), so we just return null.
+                    //int fd = nativeExecuteForBlobFileDescriptor(
+                    //        mConnectionPtr, statement.mStatementPtr);
+                    //return fd >= 0 ? ParcelFileDescriptor.adoptFd(fd) : null;
+                    return null;
                 } finally {
                     detachCancellationSignal(cancellationSignal);
                 }
@@ -1139,7 +1145,10 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         // Get information about attached databases.
         // We ignore the first row in the database list because it corresponds to
         // the main database which we have already described.
-        CursorWindow window = new CursorWindow("collectDbStats");
+
+        // original code used the newer named CursorWindows, but not available
+        // in API 9 etc. Was called "collectDbStats", but name is seemingly only cosmetic
+        CursorWindow window = new CursorWindow(true);
         try {
             executeForCursorWindow("PRAGMA database_list;", null, window, 0, 0, false, null);
             for (int i = 1; i < window.getNumRows(); i++) {

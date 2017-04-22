@@ -20,7 +20,8 @@
 
 package org.sqlite.database.sqlite;
 
-import android.database.DatabaseUtils;
+// We use a local version of DatabaseUtils which implements methods not available in earlier APIs
+//import android.database.DatabaseUtils;
 import org.sqlite.os.CancellationSignal;
 
 import java.util.Arrays;
