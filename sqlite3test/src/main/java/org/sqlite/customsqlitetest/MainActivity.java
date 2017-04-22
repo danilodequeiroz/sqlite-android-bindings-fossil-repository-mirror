@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         res = st.simpleQueryForString();
 
         myTV.append("SQLite version " + res + "\n\n");
+        db.close();
     }
 
     public void test_warning(String name, String warning){
@@ -120,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             t.join();
         } catch (InterruptedException e) {
         }
+        db.close();
     }
 
     /*
@@ -160,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             test_result("thread_test_2", res, "concurrent", t0);
         }
+        db.close();
     }
 
     /*
@@ -392,6 +395,7 @@ public class MainActivity extends AppCompatActivity {
         final long t4 = System.nanoTime();
 
         test_result("see_test_2.5", db_is_encrypted(), "encrypted", t4);
+        db.close();
     }
 
     private static boolean mLibIsLoaded = false;
