@@ -15,6 +15,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            debuggable true
+            jniDebuggable true
+        }
     }
     productFlavors {
     }
@@ -24,5 +29,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile project(':sqlite3')
+    releaseCompile project(path: ':sqlite3', configuration: 'release')
+    debugCompile project(path: ':sqlite3', configuration: 'debug')
 }
