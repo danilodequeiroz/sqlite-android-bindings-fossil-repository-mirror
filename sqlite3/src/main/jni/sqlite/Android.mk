@@ -5,6 +5,9 @@ include $(CLEAR_VARS)
 # If using SEE, uncomment the following:
 # LOCAL_CFLAGS += -DSQLITE_HAS_CODEC
 
+#Define HAVE_USLEEP, otherwise ALL sleep() calls take at least 1000ms
+LOCAL_CFLAGS += -DHAVE_USLEEP=1
+
 # This is important - it causes SQLite to use memory for temp files. Since 
 # Android has no globally writable temp directory, if this is not defined the
 # application throws an exception when it tries to create a temp file.
