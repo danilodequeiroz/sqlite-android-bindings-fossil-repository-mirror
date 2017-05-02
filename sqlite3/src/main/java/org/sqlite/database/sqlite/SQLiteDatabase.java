@@ -38,12 +38,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.Printer;
 
-import org.sqlite.database.sqlite.CloseGuard;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -249,6 +248,16 @@ public final class SQLiteDatabase extends SQLiteClosable {
      * @see #enableWriteAheadLogging
      */
     public static final int ENABLE_WRITE_AHEAD_LOGGING = 0x20000000;
+
+    /**
+     * NOTE: THIS IS AN ADDITION TO THE INTERFACE FOR THE SQLITE.ORG BINDINGS.
+     *
+     * Open flag: Flag for {@link #openDatabase} to specify that loadable extensions
+     * should be allowed via SQL or API.
+     *
+     * @see #enableLoadExtension
+     */
+    public static final int ENABLE_LOAD_EXTENSION = 0x01000000;
 
     /**
      * Absolute max value that can be set by {@link #setMaxSqlCacheSize(int)}.
@@ -2009,6 +2018,81 @@ public final class SQLiteDatabase extends SQLiteClosable {
             throwIfNotOpenLocked();
 
             return (mConfigurationLocked.openFlags & ENABLE_WRITE_AHEAD_LOGGING) != 0;
+        }
+    }
+
+    /**
+     * NOTE: THIS IS AN ADDITION TO THE INTERFACE FOR THE SQLITE.ORG BINDINGS.
+     *
+     * This method will enable the Load_Extension SQL function and related API call.
+     *
+     * Note that it is more efficient to enable this as part of the open flags.
+     *
+     * @return true if successful or already enabled.
+     * @see #ENABLE_LOAD_EXTENSION
+     */
+    public boolean enableLoadExtension() {
+        synchronized (mLock) {
+            throwIfNotOpenLocked();
+
+            if ((mConfigurationLocked.openFlags & ENABLE_LOAD_EXTENSION) != 0) {
+                return true;
+            }
+
+            mConfigurationLocked.openFlags |= ENABLE_LOAD_EXTENSION;
+            try {
+                mConnectionPoolLocked.reconfigure(mConfigurationLocked);
+            } catch (RuntimeException ex) {
+                mConfigurationLocked.openFlags &= ~ENABLE_LOAD_EXTENSION;
+                throw ex;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * NOTE: THIS IS AN ADDITION TO THE INTERFACE FOR THE SQLITE.ORG BINDINGS.
+     *
+     * This method will disable the Load_Extension SQL function and related API call.
+     *
+     * @return true if successful or already enabled.
+     *
+     * @see #enableLoadExtension()
+     * @see #ENABLE_LOAD_EXTENSION
+     */
+    public void disableLoadExtension() {
+        synchronized (mLock) {
+            throwIfNotOpenLocked();
+
+            if ((mConfigurationLocked.openFlags & ENABLE_LOAD_EXTENSION) == 0) {
+                return;
+            }
+
+            mConfigurationLocked.openFlags &= ~ENABLE_LOAD_EXTENSION;
+            try {
+                mConnectionPoolLocked.reconfigure(mConfigurationLocked);
+            } catch (RuntimeException ex) {
+                mConfigurationLocked.openFlags |= ENABLE_LOAD_EXTENSION;
+                throw ex;
+            }
+        }
+    }
+
+    /**
+     * NOTE: THIS IS AN ADDITION TO THE INTERFACE FOR THE SQLITE.ORG BINDINGS.
+     *
+     * Returns true if loading extensions has been enabled for this database.
+     *
+     * @return True if loading extensions has been enabled for this database.
+     *
+     * @see #enableLoadExtension()
+     * @see #ENABLE_LOAD_EXTENSION
+     */
+    public boolean isLoadExtensionEnabled() {
+        synchronized (mLock) {
+            throwIfNotOpenLocked();
+
+            return (mConfigurationLocked.openFlags & ENABLE_LOAD_EXTENSION) != 0;
         }
     }
 

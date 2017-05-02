@@ -858,6 +858,12 @@ static void nativeResetCancel(JNIEnv* env, jobject clazz, jlong connectionPtr,
     }
 }
 
+/** NOTE: Extension for sqlite.org bindings */
+static void nativeEnableLoadExtension(JNIEnv* env, jobject clazz, jlong connectionPtr, jboolean enable) {
+    SQLiteConnection* connection = reinterpret_cast<SQLiteConnection*>(connectionPtr);
+    sqlite3_enable_load_extension(connection->db, enable ? 1 : 0);
+}
+
 static jboolean nativeHasCodec(JNIEnv* env, jobject clazz){
 #ifdef SQLITE_HAS_CODEC
   return true;
@@ -922,6 +928,8 @@ static JNINativeMethod sMethods[] =
             (void*)nativeCancel },
     { "nativeResetCancel", "(JZ)V",
             (void*)nativeResetCancel },
+    { "nativeEnableLoadExtension", "(JZ)V",
+            (void*)nativeEnableLoadExtension },
 
     { "nativeHasCodec", "()Z", (void*)nativeHasCodec },
 };

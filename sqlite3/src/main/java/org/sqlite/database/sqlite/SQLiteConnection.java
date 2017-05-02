@@ -165,6 +165,8 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
     private static native void nativeResetCancel(long connectionPtr, boolean cancelable);
 
     private static native boolean nativeHasCodec();
+    private static native void nativeEnableLoadExtension(long connectionPtr, boolean enable);
+
     public static boolean hasCodec(){ return nativeHasCodec(); }
 
     private SQLiteConnection(SQLiteConnectionPool pool,
@@ -223,11 +225,12 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         setPageSize();
         setForeignKeyModeFromConfiguration();
         setJournalSizeLimit();
-	setAutoCheckpointInterval();
-	if( !nativeHasCodec() ){
-	  setWalModeFromConfiguration();
-          setLocaleFromConfiguration();
-	}
+        setAutoCheckpointInterval();
+        if( !nativeHasCodec() ){
+            setWalModeFromConfiguration();
+            setLocaleFromConfiguration();
+        }
+        setLoadExtensionFromConfiguration();
 
         // Register custom functions.
         final int functionCount = mConfiguration.customFunctions.size();
@@ -306,6 +309,15 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
                 setJournalMode(SQLiteGlobal.getDefaultJournalMode());
                 setSyncMode(SQLiteGlobal.getDefaultSyncMode());
             }
+        }
+    }
+
+    // NOTE: Extension for sqlite.org bindings
+    private void setLoadExtensionFromConfiguration() {
+        if ((mConfiguration.openFlags & SQLiteDatabase.ENABLE_LOAD_EXTENSION) != 0) {
+            nativeEnableLoadExtension(mConnectionPtr, true);
+        } else {
+            nativeEnableLoadExtension(mConnectionPtr, false);
         }
     }
 
@@ -432,6 +444,9 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         boolean walModeChanged = ((configuration.openFlags ^ mConfiguration.openFlags)
                 & SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING) != 0;
         boolean localeChanged = !configuration.locale.equals(mConfiguration.locale);
+        // NOTE: Extension for sqlite.org bindings
+        boolean loadExtSqlChanged = ((configuration.openFlags ^ mConfiguration.openFlags)
+                & SQLiteDatabase.ENABLE_LOAD_EXTENSION) != 0;
 
         // Update configuration parameters.
         mConfiguration.updateParametersFrom(configuration);
@@ -452,6 +467,11 @@ public final class SQLiteConnection implements CancellationSignal.OnCancelListen
         // Update locale.
         if (localeChanged) {
             setLocaleFromConfiguration();
+        }
+
+        // Update LOAD_EXTENSIONS support (sqlite.org extension)
+        if (loadExtSqlChanged) {
+            setLoadExtensionFromConfiguration();
         }
     }
 
