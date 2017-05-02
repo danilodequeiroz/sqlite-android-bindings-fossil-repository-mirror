@@ -861,7 +861,11 @@ static void nativeResetCancel(JNIEnv* env, jobject clazz, jlong connectionPtr,
 /** NOTE: Extension for sqlite.org bindings */
 static void nativeEnableLoadExtension(JNIEnv* env, jobject clazz, jlong connectionPtr, jboolean enable) {
     SQLiteConnection* connection = reinterpret_cast<SQLiteConnection*>(connectionPtr);
+#ifdef SQLITE_OMIT_LOAD_EXTENSION
+    throw_sqlite3_exception(env, SQLITE_MISUSE, "API unavailable", "Loadable extensions disabled during library build");
+#else
     sqlite3_enable_load_extension(connection->db, enable ? 1 : 0);
+#endif
 }
 
 static jboolean nativeHasCodec(JNIEnv* env, jobject clazz){
