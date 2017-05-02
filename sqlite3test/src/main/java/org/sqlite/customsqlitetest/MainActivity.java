@@ -437,6 +437,7 @@ public class MainActivity extends AppCompatActivity {
             see_test_2();
             stmt_jrnl_test_1();
             json_test_1();
+            load_extension_test_1();
 
             myTV.append("\n" + myNErr + " errors from " + myNTest + " tests\n");
         } catch(Exception e) {
@@ -495,6 +496,101 @@ public class MainActivity extends AppCompatActivity {
         test_result("json_test_1.3", res, r2, t2);
 
         s.close();
+
+        db.close();
+    }
+
+    public void load_extension_test_1() throws Exception {
+        long t0 = System.nanoTime();
+        SQLiteDatabase.deleteDatabase(DB_PATH);
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(DB_PATH.getAbsolutePath(), null, SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_LOAD_EXTENSION);
+
+        Cursor c = null;
+        try {
+            c = db.rawQuery("select load_extension('foo')", new String[] {});
+            c.moveToFirst();
+            c.close();
+            c = null;
+        } catch (Exception e) {
+            String exp = "dlopen failed";
+            test_result("load_extension_1.1", e.getMessage().substring(0,exp.length()), exp, t0);
+        } finally {
+            if (c != null) {
+                c.close();
+                c = null;
+            }
+        }
+        t0 = System.nanoTime();
+
+        db.disableLoadExtension();
+        try {
+            c = db.rawQuery("select load_extension('foo')", new String[] {});
+            c.moveToFirst();
+            c.close();
+            c = null;
+        } catch (Exception e) {
+            String exp = "not authorized";
+            test_result("load_extension_1.2", e.getMessage().substring(0,exp.length()), exp, t0);
+        } finally {
+            if (c != null) {
+                c.close();
+                c = null;
+            }
+        }
+        t0 = System.nanoTime();
+
+        db.enableLoadExtension();
+        try {
+            c = db.rawQuery("select load_extension('foo')", new String[] {});
+            c.moveToFirst();
+            c.close();
+            c = null;
+        } catch (Exception e) {
+            String exp = "dlopen failed";
+            test_result("load_extension_1.3", e.getMessage().substring(0,exp.length()), exp, t0);
+        } finally {
+            if (c != null) {
+                c.close();
+                c = null;
+            }
+        }
+        t0 = System.nanoTime();
+
+        db.close();
+
+        db = SQLiteDatabase.openDatabase(DB_PATH.getAbsolutePath(), null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        db.disableLoadExtension();
+        try {
+            c = db.rawQuery("select load_extension('foo')", new String[] {});
+            c.moveToFirst();
+            c.close();
+            c = null;
+        } catch (Exception e) {
+            String exp = "not authorized";
+            test_result("load_extension_1.4", e.getMessage().substring(0,exp.length()), exp, t0);
+        } finally {
+            if (c != null) {
+                c.close();
+                c = null;
+            }
+        }
+        t0 = System.nanoTime();
+
+        db.enableLoadExtension();
+        try {
+            c = db.rawQuery("select load_extension('foo')", new String[] {});
+            c.moveToFirst();
+            c.close();
+            c = null;
+        } catch (Exception e) {
+            String exp = "dlopen failed";
+            test_result("load_extension_1.5", e.getMessage().substring(0,exp.length()), exp, t0);
+        } finally {
+            if (c != null) {
+                c.close();
+                c = null;
+            }
+        }
 
         db.close();
     }
