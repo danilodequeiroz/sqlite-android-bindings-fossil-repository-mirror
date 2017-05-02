@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
 /**
@@ -1455,10 +1456,10 @@ public final class SQLiteDatabase extends SQLiteClosable {
             if (size > 0) {
                 bindArgs = new Object[size];
                 int i = 0;
-                for (String colName : initialValues.keySet()) {
+                for (Entry<String, Object> entry : initialValues.valueSet()) {
                     sql.append((i > 0) ? "," : "");
-                    sql.append(colName);
-                    bindArgs[i++] = initialValues.get(colName);
+                    sql.append(entry.getKey());
+                    bindArgs[i++] = entry.getValue();
                 }
                 sql.append(')');
                 sql.append(" VALUES (");
@@ -1559,10 +1560,10 @@ public final class SQLiteDatabase extends SQLiteClosable {
             int bindArgsSize = (whereArgs == null) ? setValuesSize : (setValuesSize + whereArgs.length);
             Object[] bindArgs = new Object[bindArgsSize];
             int i = 0;
-            for (String colName : values.keySet()) {
+            for (Entry<String, Object> entry : values.valueSet()) {
                 sql.append((i > 0) ? "," : "");
-                sql.append(colName);
-                bindArgs[i++] = values.get(colName);
+                sql.append(entry.getKey());
+                bindArgs[i++] = entry.getValue();
                 sql.append("=?");
             }
             if (whereArgs != null) {

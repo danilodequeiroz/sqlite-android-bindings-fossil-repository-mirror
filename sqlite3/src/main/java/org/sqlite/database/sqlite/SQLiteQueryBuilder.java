@@ -21,7 +21,6 @@
 package org.sqlite.database.sqlite;
 
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import org.sqlite.os.CancellationSignal;
 import org.sqlite.os.OperationCanceledException;
 import android.provider.BaseColumns;
