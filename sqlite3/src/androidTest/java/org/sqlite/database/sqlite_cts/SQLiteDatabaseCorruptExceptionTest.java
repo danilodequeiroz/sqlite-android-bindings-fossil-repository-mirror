@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
-import org.sqlite.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.test.AndroidTestCase;
 
-public class SQLiteDiskIOExceptionTest extends AndroidTestCase {
+public class SQLiteDatabaseCorruptExceptionTest extends AndroidTestCase {
     public void testConstructor() {
-        new SQLiteDiskIOException();
+        new SQLiteDatabaseCorruptException();
 
-        new SQLiteDiskIOException("error");
+        new SQLiteDatabaseCorruptException("error");
     }
 }

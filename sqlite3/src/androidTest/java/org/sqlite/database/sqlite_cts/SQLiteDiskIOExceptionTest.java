@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
-import org.sqlite.database.sqlite.SQLiteAbortException;
+import org.sqlite.database.sqlite.SQLiteDiskIOException;
 import android.test.AndroidTestCase;
 
-public class SQLiteAbortExceptionTest extends AndroidTestCase {
+public class SQLiteDiskIOExceptionTest extends AndroidTestCase {
     public void testConstructor() {
-        new SQLiteAbortException();
+        new SQLiteDiskIOException();
 
-        new SQLiteAbortException("error");
+        new SQLiteDiskIOException("error");
     }
 }

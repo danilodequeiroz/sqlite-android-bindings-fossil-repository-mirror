@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
-import org.sqlite.database.sqlite.SQLiteDoneException;
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
 
-public class SQLiteDoneExceptionTest extends AndroidTestCase {
-    public void testConstructor() {
-        new SQLiteDoneException();
-
-        new SQLiteDoneException("error");
+public class SQLiteQueryTest extends TestCase {
+    public void testMethods() {
+        // cannot obtain an instance of SQLiteQuery
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -49,7 +49,7 @@ public class DatabaseStatementTest extends AndroidTestCase implements Performanc
     protected void setUp() throws Exception {
         super.setUp();
         System.loadLibrary("sqliteX");
-        File f = mContext.getDatabasePath(MyHelper.DATABASE_NAME);
+        File f = mContext.getDatabasePath(DATABASE_NAME);
         f.mkdirs();
         if (f.exists()) { f.delete(); }
         mDatabase = SQLiteDatabase.openOrCreateDatabase(f,null);

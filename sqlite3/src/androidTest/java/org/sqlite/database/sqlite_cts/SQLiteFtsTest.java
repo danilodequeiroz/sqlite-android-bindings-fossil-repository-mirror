@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -44,7 +44,7 @@ public class SQLiteFtsTest extends AndroidTestCase {
     public void setUp() throws Exception {
         super.setUp();
         System.loadLibrary("sqliteX");
-        File f = mContext.getDatabasePath(MyHelper.DATABASE_NAME);
+        File f = mContext.getDatabasePath("CTS_FTS");
         f.mkdirs();
         if (f.exists()) { f.delete(); }
         mDatabase = SQLiteDatabase.openOrCreateDatabase(f,null);

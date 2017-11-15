@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package android.database.sqlite.cts;
+package org.sqlite.database.sqlite_cts;
 
-import android.database.sqlite.SQLiteDatabaseCorruptException;
+import org.sqlite.database.sqlite.SQLiteAbortException;
 import android.test.AndroidTestCase;
 
-public class SQLiteDatabaseCorruptExceptionTest extends AndroidTestCase {
+public class SQLiteAbortExceptionTest extends AndroidTestCase {
     public void testConstructor() {
-        new SQLiteDatabaseCorruptException();
+        new SQLiteAbortException();
 
-        new SQLiteDatabaseCorruptException("error");
+        new SQLiteAbortException("error");
     }
 }

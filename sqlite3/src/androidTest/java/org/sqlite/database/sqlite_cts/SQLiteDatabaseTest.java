@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
 import java.io.File;
 import java.io.IOException;

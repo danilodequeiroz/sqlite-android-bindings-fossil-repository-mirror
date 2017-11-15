@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
-import org.sqlite.database.sqlite.SQLiteFullException;
+import org.sqlite.database.sqlite.SQLiteConstraintException;
 import android.test.AndroidTestCase;
 
-public class SQLiteFullExceptionTest extends AndroidTestCase {
+public class SQLiteConstraintExceptionTest extends AndroidTestCase {
     public void testConstructor() {
-        new SQLiteFullException();
+        new SQLiteConstraintException();
 
-        new SQLiteFullException("error");
+        new SQLiteConstraintException("error");
     }
 }

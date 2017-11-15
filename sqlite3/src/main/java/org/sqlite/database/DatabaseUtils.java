@@ -1368,7 +1368,7 @@ public class DatabaseUtils {
             Context context, String dbName, int dbVersion, String sqlStatements) {
 
         File f = context.getDatabasePath(dbName);
-        f.mkdirs();
+        f.getParentFile().mkdirs();
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(f, null);
 
         // TODO: this is not quite safe since it assumes that all semicolons at the end of a line

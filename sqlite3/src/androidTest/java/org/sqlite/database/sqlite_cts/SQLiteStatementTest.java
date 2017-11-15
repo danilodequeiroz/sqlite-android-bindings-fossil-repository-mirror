@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import org.sqlite.database.DatabaseUtils;
 import org.sqlite.database.SQLException;
 import org.sqlite.database.sqlite.SQLiteDatabase;
 import org.sqlite.database.sqlite.SQLiteDoneException;
@@ -90,7 +90,7 @@ public class SQLiteStatementTest extends AndroidTestCase {
         mDatabase.disableWriteAheadLogging();
         populateDefaultTable();
 
-        assertEquals(0, ExtraUtils.longForQuery(mDatabase, "select count(*) from test", null));
+        assertEquals(0, DatabaseUtils.longForQuery(mDatabase, "select count(*) from test", null));
 
         // test update
         // insert 2 rows and then update them.
@@ -103,7 +103,7 @@ public class SQLiteStatementTest extends AndroidTestCase {
         assertEquals(2, statement2.executeUpdateDelete());
         statement2.close();
         // should still have 2 rows in the table
-        assertEquals(2, ExtraUtils.longForQuery(mDatabase, "select count(*) from test", null));
+        assertEquals(2, DatabaseUtils.longForQuery(mDatabase, "select count(*) from test", null));
 
         // test delete
         // insert 2 more rows and delete 3 of them
@@ -114,7 +114,7 @@ public class SQLiteStatementTest extends AndroidTestCase {
         assertEquals(3, statement2.executeUpdateDelete());
         statement2.close();
         // should still have 1 row1 in the table
-        assertEquals(1, ExtraUtils.longForQuery(mDatabase, "select count(*) from test", null));
+        assertEquals(1, DatabaseUtils.longForQuery(mDatabase, "select count(*) from test", null));
 
         // if the SQL statement is something that causes rows of data to
         // be returned, executeUpdateDelete() (and execute()) throw an exception.

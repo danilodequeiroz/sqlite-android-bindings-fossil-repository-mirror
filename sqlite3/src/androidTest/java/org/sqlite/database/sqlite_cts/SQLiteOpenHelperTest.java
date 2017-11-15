@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package org.sqlite.database.sqlite_cts;
 
 import android.content.Context;
 import android.database.Cursor;
