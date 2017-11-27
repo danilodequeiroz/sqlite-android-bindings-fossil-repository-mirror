@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
-package org.sqlite.database.sqlite;
+package android.database.sqlite;
 
 import java.util.ArrayList;
 
 import android.os.Build;
-/* import android.os.SystemProperties; */
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.Printer;
 
@@ -64,7 +60,7 @@ public final class SQLiteDebug {
      * True to enable database performance testing instrumentation.
      * @hide
      */
-    public static final boolean DEBUG_LOG_SLOW_QUERIES = false;
+    public static final boolean DEBUG_LOG_SLOW_QUERIES = Build.IS_DEBUGGABLE;
 
     private SQLiteDebug() {
     }
@@ -83,7 +79,7 @@ public final class SQLiteDebug {
      * @hide
      */
     public static final boolean shouldLogSlowQuery(long elapsedTimeMillis) {
-        int slowQueryMillis = 10000;
+        int slowQueryMillis = SystemProperties.getInt("db.log.slow_query_threshold", -1);
         return slowQueryMillis >= 0 && elapsedTimeMillis >= slowQueryMillis;
     }
 

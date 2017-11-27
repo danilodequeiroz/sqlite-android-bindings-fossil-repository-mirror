@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
 #define LOG_TAG "SQLiteGlobal"
 
 #include <jni.h>
-#include <JNIHelp.h>
-#include "ALog-priv.h"
-
+#include <nativehelper/JNIHelp.h>
+#include "core_jni_helpers.h"
 
 #include <sqlite3.h>
-#if 0
 #include <sqlite3_android.h>
-#endif
-
 
 #include "android_database_SQLiteCommon.h"
+#include "android_util_Log.h"
 
 namespace android {
 
@@ -42,14 +35,18 @@ static const int SOFT_HEAP_LIMIT = 8 * 1024 * 1024;
 
 
 // Called each time a message is logged.
-static void sqliteLogCallback(void* data, int iErrCode, const char* zMsg) {
+static void sqliteLogCallback(void* data, int err, const char* msg) {
     bool verboseLog = !!data;
-    if (iErrCode == 0 || iErrCode == SQLITE_CONSTRAINT || iErrCode == SQLITE_SCHEMA) {
+    int errType = err & 255;
+    if (errType == 0 || errType == SQLITE_CONSTRAINT || errType == SQLITE_SCHEMA
+            || errType == SQLITE_NOTICE || err == SQLITE_WARNING_AUTOINDEX) {
         if (verboseLog) {
-            ALOG(LOG_VERBOSE, SQLITE_LOG_TAG, "(%d) %s\n", iErrCode, zMsg);
+            ALOG(LOG_VERBOSE, SQLITE_LOG_TAG, "(%d) %s\n", err, msg);
         }
+    } else if (errType == SQLITE_WARNING) {
+        ALOG(LOG_WARN, SQLITE_LOG_TAG, "(%d) %s\n", err, msg);
     } else {
-        ALOG(LOG_ERROR, SQLITE_LOG_TAG, "(%d) %s\n", iErrCode, zMsg);
+        ALOG(LOG_ERROR, SQLITE_LOG_TAG, "(%d) %s\n", err, msg);
     }
 }
 
@@ -62,10 +59,7 @@ static void sqliteInitialize() {
     sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
 
     // Redirect SQLite log messages to the Android log.
-#if 0
     bool verboseLog = android_util_Log_isVerboseLogEnabled(SQLITE_LOG_TAG);
-#endif
-    bool verboseLog = false;
     sqlite3_config(SQLITE_CONFIG_LOG, &sqliteLogCallback, verboseLog ? (void*)1 : NULL);
 
     // The soft heap limit prevents the page cache allocations from growing
@@ -81,18 +75,17 @@ static jint nativeReleaseMemory(JNIEnv* env, jclass clazz) {
     return sqlite3_release_memory(SOFT_HEAP_LIMIT);
 }
 
-static JNINativeMethod sMethods[] =
+static const JNINativeMethod sMethods[] =
 {
     /* name, signature, funcPtr */
-    { "nativeReleaseMemory", "()I",
-            (void*)nativeReleaseMemory },
+    { "nativeReleaseMemory", "()I", (void*)nativeReleaseMemory },
 };
 
 int register_android_database_SQLiteGlobal(JNIEnv *env)
 {
     sqliteInitialize();
 
-    return jniRegisterNativeMethods(env, "org/sqlite/database/sqlite/SQLiteGlobal",
+    return RegisterMethodsOrDie(env, "android/database/sqlite/SQLiteGlobal",
             sMethods, NELEM(sMethods));
 }
 

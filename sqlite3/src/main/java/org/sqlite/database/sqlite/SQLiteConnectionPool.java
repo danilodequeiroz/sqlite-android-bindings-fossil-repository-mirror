@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
-package org.sqlite.database.sqlite;
+package android.database.sqlite;
 
-import org.sqlite.database.sqlite.CloseGuard;
+import dalvik.system.CloseGuard;
 
-import org.sqlite.database.sqlite.SQLiteDebug.DbStats;
+import android.database.sqlite.SQLiteDebug.DbStats;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 import android.os.SystemClock;
 import android.util.Log;
-/* import android.util.PrefixPrinter; */
+import android.util.PrefixPrinter;
 import android.util.Printer;
 
 import java.io.Closeable;
@@ -996,17 +992,6 @@ public final class SQLiteConnectionPool implements Closeable {
         mConnectionWaiterPool = waiter;
     }
 
-    public void enableLocalizedCollators() {
-      synchronized (mLock) {
-	if( !mAcquiredConnections.isEmpty() || mAvailablePrimaryConnection==null ) {
-	  throw new IllegalStateException(
-	      "Cannot enable localized collators while database is in use"
-	  );
-	}
-	mAvailablePrimaryConnection.enableLocalizedCollators();
-      }
-    }
-
     /**
      * Dumps debugging information about this connection pool.
      *
@@ -1014,8 +999,7 @@ public final class SQLiteConnectionPool implements Closeable {
      * @param verbose True to dump more verbose information.
      */
     public void dump(Printer printer, boolean verbose) {
-      /*
-        Printer indentedPrinter = Printer.create(printer, "    ");
+        Printer indentedPrinter = PrefixPrinter.create(printer, "    ");
         synchronized (mLock) {
             printer.println("Connection pool for " + mConfiguration.path + ":");
             printer.println("  Open: " + mIsOpen);
@@ -1066,7 +1050,6 @@ public final class SQLiteConnectionPool implements Closeable {
                 indentedPrinter.println("<none>");
             }
         }
-        */
     }
 
     @Override

@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
-package org.sqlite.database.sqlite;
+package android.database.sqlite;
 
 /**
  * An exception that indicates that the SQLite program was aborted.

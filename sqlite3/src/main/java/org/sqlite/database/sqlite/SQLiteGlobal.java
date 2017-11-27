@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
-package org.sqlite.database.sqlite;
+package android.database.sqlite;
 
 import android.content.res.Resources;
 import android.os.StatFs;
-/* import android.os.SystemProperties; */
+import android.os.SystemProperties;
 
 /**
  * Provides access to SQLite functions that affect all database connection,
@@ -65,9 +61,11 @@ public final class SQLiteGlobal {
     public static int getDefaultPageSize() {
         synchronized (sLock) {
             if (sDefaultPageSize == 0) {
+                // If there is an issue accessing /data, something is so seriously
+                // wrong that we just let the IllegalArgumentException propagate.
                 sDefaultPageSize = new StatFs("/data").getBlockSize();
             }
-            return 1024;
+            return SystemProperties.getInt("debug.sqlite.pagesize", sDefaultPageSize);
         }
     }
 
@@ -75,35 +73,45 @@ public final class SQLiteGlobal {
      * Gets the default journal mode when WAL is not in use.
      */
     public static String getDefaultJournalMode() {
-        return "delete";
+        return SystemProperties.get("debug.sqlite.journalmode",
+                Resources.getSystem().getString(
+                com.android.internal.R.string.db_default_journal_mode));
     }
 
     /**
      * Gets the journal size limit in bytes.
      */
     public static int getJournalSizeLimit() {
-        return 10000;
+        return SystemProperties.getInt("debug.sqlite.journalsizelimit",
+                Resources.getSystem().getInteger(
+                com.android.internal.R.integer.db_journal_size_limit));
     }
 
     /**
      * Gets the default database synchronization mode when WAL is not in use.
      */
     public static String getDefaultSyncMode() {
-        return "normal";
+        return SystemProperties.get("debug.sqlite.syncmode",
+                Resources.getSystem().getString(
+                com.android.internal.R.string.db_default_sync_mode));
     }
 
     /**
      * Gets the database synchronization mode when in WAL mode.
      */
     public static String getWALSyncMode() {
-        return "normal";
+        return SystemProperties.get("debug.sqlite.wal.syncmode",
+                Resources.getSystem().getString(
+                com.android.internal.R.string.db_wal_sync_mode));
     }
 
     /**
      * Gets the WAL auto-checkpoint integer in database pages.
      */
     public static int getWALAutoCheckpoint() {
-        int value = 1000;
+        int value = SystemProperties.getInt("debug.sqlite.wal.autocheckpoint",
+                Resources.getSystem().getInteger(
+                com.android.internal.R.integer.db_wal_autocheckpoint));
         return Math.max(1, value);
     }
 
@@ -111,7 +119,9 @@ public final class SQLiteGlobal {
      * Gets the connection pool size when in WAL mode.
      */
     public static int getWALConnectionPoolSize() {
-        int value = 10;
+        int value = SystemProperties.getInt("debug.sqlite.wal.poolsize",
+                Resources.getSystem().getInteger(
+                com.android.internal.R.integer.db_connection_pool_size));
         return Math.max(2, value);
     }
 }

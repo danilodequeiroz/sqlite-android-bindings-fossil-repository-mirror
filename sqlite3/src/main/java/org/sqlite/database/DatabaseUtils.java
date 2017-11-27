@@ -14,31 +14,26 @@
  * limitations under the License.
  */
 
-package org.sqlite.database;
+package android.database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
-import org.sqlite.database.sqlite.SQLiteAbortException;
-import org.sqlite.database.sqlite.SQLiteConstraintException;
-import org.sqlite.database.sqlite.SQLiteDatabase;
-import org.sqlite.database.sqlite.SQLiteDatabaseCorruptException;
-import org.sqlite.database.sqlite.SQLiteDiskIOException;
-import org.sqlite.database.sqlite.SQLiteException;
-import org.sqlite.database.sqlite.SQLiteFullException;
-import org.sqlite.database.sqlite.SQLiteProgram;
-import org.sqlite.database.sqlite.SQLiteStatement;
-
-import android.database.CursorWindow;
+import android.database.sqlite.SQLiteAbortException;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteFullException;
+import android.database.sqlite.SQLiteProgram;
+import android.database.sqlite.SQLiteStatement;
 import android.os.OperationCanceledException;
 import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 
-import android.database.Cursor;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.Collator;
@@ -133,36 +128,36 @@ public class DatabaseUtils {
      * @see Parcel#writeNoException
      * @see Parcel#readException
      */
-//    public static final void readExceptionFromParcel(Parcel reply) {
-//        int code = reply.readExceptionCode();
-//        if (code == 0) return;
-//        String msg = reply.readString();
-//        DatabaseUtils.readExceptionFromParcel(reply, msg, code);
-//    }
-//
-//    public static void readExceptionWithFileNotFoundExceptionFromParcel(
-//            Parcel reply) throws FileNotFoundException {
-//        int code = reply.readExceptionCode();
-//        if (code == 0) return;
-//        String msg = reply.readString();
-//        if (code == 1) {
-//            throw new FileNotFoundException(msg);
-//        } else {
-//            DatabaseUtils.readExceptionFromParcel(reply, msg, code);
-//        }
-//    }
-//
-//    public static void readExceptionWithOperationApplicationExceptionFromParcel(
-//            Parcel reply) throws OperationApplicationException {
-//        int code = reply.readExceptionCode();
-//        if (code == 0) return;
-//        String msg = reply.readString();
-//        if (code == 10) {
-//            throw new OperationApplicationException(msg);
-//        } else {
-//            DatabaseUtils.readExceptionFromParcel(reply, msg, code);
-//        }
-//    }
+    public static final void readExceptionFromParcel(Parcel reply) {
+        int code = reply.readExceptionCode();
+        if (code == 0) return;
+        String msg = reply.readString();
+        DatabaseUtils.readExceptionFromParcel(reply, msg, code);
+    }
+
+    public static void readExceptionWithFileNotFoundExceptionFromParcel(
+            Parcel reply) throws FileNotFoundException {
+        int code = reply.readExceptionCode();
+        if (code == 0) return;
+        String msg = reply.readString();
+        if (code == 1) {
+            throw new FileNotFoundException(msg);
+        } else {
+            DatabaseUtils.readExceptionFromParcel(reply, msg, code);
+        }
+    }
+
+    public static void readExceptionWithOperationApplicationExceptionFromParcel(
+            Parcel reply) throws OperationApplicationException {
+        int code = reply.readExceptionCode();
+        if (code == 0) return;
+        String msg = reply.readString();
+        if (code == 10) {
+            throw new OperationApplicationException(msg);
+        } else {
+            DatabaseUtils.readExceptionFromParcel(reply, msg, code);
+        }
+    }
 
     private static final void readExceptionFromParcel(Parcel reply, String msg, int code) {
         switch (code) {
@@ -1366,11 +1361,7 @@ public class DatabaseUtils {
      */
     static public void createDbFromSqlStatements(
             Context context, String dbName, int dbVersion, String sqlStatements) {
-
-        File f = context.getDatabasePath(dbName);
-        f.getParentFile().mkdirs();
-        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(f, null);
-
+        SQLiteDatabase db = context.openOrCreateDatabase(dbName, 0, null);
         // TODO: this is not quite safe since it assumes that all semicolons at the end of a line
         // terminate statements. It is possible that a text field contains ;\n. We will have to fix
         // this if that turns out to be a problem.

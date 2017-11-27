@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
 #include "android_database_SQLiteCommon.h"
+
+#include <utils/String8.h>
 
 namespace android {
 
@@ -65,70 +63,72 @@ void throw_sqlite3_exception(JNIEnv* env, int errcode,
     const char* exceptionClass;
     switch (errcode & 0xff) { /* mask off extended error code */
         case SQLITE_IOERR:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteDiskIOException";
+            exceptionClass = "android/database/sqlite/SQLiteDiskIOException";
             break;
         case SQLITE_CORRUPT:
         case SQLITE_NOTADB: // treat "unsupported file format" error as corruption also
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteDatabaseCorruptException";
+            exceptionClass = "android/database/sqlite/SQLiteDatabaseCorruptException";
             break;
         case SQLITE_CONSTRAINT:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteConstraintException";
+            exceptionClass = "android/database/sqlite/SQLiteConstraintException";
             break;
         case SQLITE_ABORT:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteAbortException";
+            exceptionClass = "android/database/sqlite/SQLiteAbortException";
             break;
         case SQLITE_DONE:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteDoneException";
+            exceptionClass = "android/database/sqlite/SQLiteDoneException";
             sqlite3Message = NULL; // SQLite error message is irrelevant in this case
             break;
         case SQLITE_FULL:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteFullException";
+            exceptionClass = "android/database/sqlite/SQLiteFullException";
             break;
         case SQLITE_MISUSE:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteMisuseException";
+            exceptionClass = "android/database/sqlite/SQLiteMisuseException";
             break;
         case SQLITE_PERM:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteAccessPermException";
+            exceptionClass = "android/database/sqlite/SQLiteAccessPermException";
             break;
         case SQLITE_BUSY:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteDatabaseLockedException";
+            exceptionClass = "android/database/sqlite/SQLiteDatabaseLockedException";
             break;
         case SQLITE_LOCKED:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteTableLockedException";
+            exceptionClass = "android/database/sqlite/SQLiteTableLockedException";
             break;
         case SQLITE_READONLY:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteReadOnlyDatabaseException";
+            exceptionClass = "android/database/sqlite/SQLiteReadOnlyDatabaseException";
             break;
         case SQLITE_CANTOPEN:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteCantOpenDatabaseException";
+            exceptionClass = "android/database/sqlite/SQLiteCantOpenDatabaseException";
             break;
         case SQLITE_TOOBIG:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteBlobTooBigException";
+            exceptionClass = "android/database/sqlite/SQLiteBlobTooBigException";
             break;
         case SQLITE_RANGE:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteBindOrColumnIndexOutOfRangeException";
+            exceptionClass = "android/database/sqlite/SQLiteBindOrColumnIndexOutOfRangeException";
             break;
         case SQLITE_NOMEM:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteOutOfMemoryException";
+            exceptionClass = "android/database/sqlite/SQLiteOutOfMemoryException";
             break;
         case SQLITE_MISMATCH:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteDatatypeMismatchException";
+            exceptionClass = "android/database/sqlite/SQLiteDatatypeMismatchException";
             break;
         case SQLITE_INTERRUPT:
             exceptionClass = "android/os/OperationCanceledException";
             break;
         default:
-            exceptionClass = "org/sqlite/database/sqlite/SQLiteException";
+            exceptionClass = "android/database/sqlite/SQLiteException";
             break;
     }
 
     if (sqlite3Message) {
-        char *zFullmsg = sqlite3_mprintf(
-            "%s (code %d)%s%s", sqlite3Message, errcode, 
-            (message ? ": " : ""), (message ? message : "")
-        );
-        jniThrowException(env, exceptionClass, zFullmsg);
-        sqlite3_free(zFullmsg);
+        String8 fullMessage;
+        fullMessage.append(sqlite3Message);
+        fullMessage.appendFormat(" (code %d)", errcode); // print extended error code
+        if (message) {
+            fullMessage.append(": ");
+            fullMessage.append(message);
+        }
+        jniThrowException(env, exceptionClass, fullMessage.string());
     } else {
         jniThrowException(env, exceptionClass, message);
     }

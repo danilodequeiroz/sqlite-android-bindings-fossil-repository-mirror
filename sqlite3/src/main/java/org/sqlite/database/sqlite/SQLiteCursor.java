@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
-** Modified to support SQLite extensions by the SQLite developers: 
-** sqlite-dev@sqlite.org.
-*/
 
-package org.sqlite.database.sqlite;
-
-import org.sqlite.database.DatabaseUtils;
+package android.database.sqlite;
 
 import android.database.AbstractWindowedCursor;
 import android.database.CursorWindow;
-
+import android.database.DatabaseUtils;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -100,7 +94,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         if (query == null) {
             throw new IllegalArgumentException("query object cannot be null");
         }
-        if (/* StrictMode.vmSqliteObjectLeaksEnabled() */ false ) {
+        if (StrictMode.vmSqliteObjectLeaksEnabled()) {
             mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         } else {
             mStackTrace = null;
@@ -140,27 +134,8 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         return mCount;
     }
 
-    /* 
-    ** The AbstractWindowClass contains protected methods clearOrCreateWindow() and
-    ** closeWindow(), which are used by the android.database.sqlite.* version of this
-    ** class. But, since they are marked with "@hide", the following replacement 
-    ** versions are required.
-    */
-    private void awc_clearOrCreateWindow(String name){
-      CursorWindow win = getWindow();
-      if( win==null ){
-        win = new CursorWindow(name);
-        setWindow(win);
-      }else{
-        win.clear();
-      }
-    }
-    private void awc_closeWindow(){
-      setWindow(null);
-    }
-
     private void fillWindow(int requiredPos) {
-        awc_clearOrCreateWindow(getDatabase().getPath());
+        clearOrCreateWindow(getDatabase().getPath());
 
         try {
             if (mCount == NO_COUNT) {
@@ -180,7 +155,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             // not produce any results.  This helps to avoid accidentally leaking
             // the cursor window if the client does not correctly handle exceptions
             // and fails to close the cursor.
-            awc_closeWindow();
+            closeWindow();
             throw ex;
         }
     }
@@ -284,7 +259,6 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         try {
             // if the cursor hasn't been closed yet, close it first
             if (mWindow != null) {
-                    /*
                 if (mStackTrace != null) {
                     String sql = mQuery.getSql();
                     int len = sql.length();
@@ -295,7 +269,6 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                         ", query = " + sql.substring(0, (len > 1000) ? 1000 : len),
                         mStackTrace);
                 }
-                */
                 close();
             }
         } finally {
