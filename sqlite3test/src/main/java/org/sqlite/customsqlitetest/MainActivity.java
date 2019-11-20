@@ -158,11 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         db.endTransaction();
         try { t.join(); } catch(InterruptedException e) {}
-        if( SQLiteDatabase.hasCodec() ){
-            test_result("thread_test_2", res, "blocked", t0);
-        } else {
-            test_result("thread_test_2", res, "concurrent", t0);
-        }
+        test_result("thread_test_2", res, "concurrent", t0);
         db.close();
     }
 
