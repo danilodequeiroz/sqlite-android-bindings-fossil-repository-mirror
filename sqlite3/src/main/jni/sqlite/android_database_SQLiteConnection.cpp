@@ -457,6 +457,12 @@ static void nativeResetStatementAndClearBindings(JNIEnv* env, jclass clazz, jlon
 }
 
 static int executeNonQuery(JNIEnv* env, SQLiteConnection* connection, sqlite3_stmt* statement) {
+    int err;
+    while( SQLITE_ROW==(err=sqlite3_step(statement)) );
+    if( err!=SQLITE_DONE ){
+      throw_sqlite3_exception(env, connection->db);
+    }
+#if 0
     int err = sqlite3_step(statement);
     if (err == SQLITE_ROW) {
         throw_sqlite3_exception(env,
@@ -464,6 +470,7 @@ static int executeNonQuery(JNIEnv* env, SQLiteConnection* connection, sqlite3_st
     } else if (err != SQLITE_DONE) {
         throw_sqlite3_exception(env, connection->db);
     }
+#endif
     return err;
 }
 
