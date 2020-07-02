@@ -1,13 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 16
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
@@ -32,14 +33,19 @@ android {
             path 'src/main/jni/Android.mk'
         }
     }
+
+    ndkVersion '21.3.6528147'
+
+    useLibrary 'android.test.base' // for android.test.AndroidTestCase
+    useLibrary 'android.test.runner' // for android.test.MoreAsserts
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile 'com.android.support:support-annotations:24.0.0'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    testImplementation 'junit:junit:4.13'
 }
 
 allprojects {
