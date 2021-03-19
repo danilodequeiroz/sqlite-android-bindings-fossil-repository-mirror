@@ -16,6 +16,10 @@
   to add it to a "static" block within the declaration of the application's
   main Activity class.
 
+<p>
+  If an SQLite related method is invoked before the shared libary is loaded,
+  the application will segfault (crash with no error message or exception).
+
 <h2>Using the SQLite Android bindings classes</h2>
 
 <p>
