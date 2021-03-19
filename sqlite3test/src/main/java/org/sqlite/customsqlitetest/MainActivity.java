@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void run_ds_test() throws Exception {
-      File file = new File(getExternalCacheDir().getPath() + "/dstest.db");
+      File file = getApplicationContext().getDatabasePath("dsstest.db");
       file.delete();
       file.createNewFile();
 
@@ -468,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
       SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(new File(uri.toString()), null);
       printPragma(sqLiteDatabase);
         myTV.append("ds_test ok\n");
-
+        sqLiteDatabase.close();
     }
 
 
