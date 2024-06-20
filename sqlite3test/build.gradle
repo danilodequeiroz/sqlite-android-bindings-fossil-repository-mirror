@@ -1,12 +1,19 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'maven-publish'
+}
 
 android {
-    compileSdkVersion 29
+
+    namespace "org.sqlite.customsqlitetest"
+    testNamespace "org.sqlite.customsqlitetest.test"
 
     defaultConfig {
         applicationId "org.sqlite.customsqlitetest"
         minSdkVersion 16
-        targetSdkVersion 29
+        compileSdk 34
+        targetSdkVersion 34
+
         versionCode 1
         versionName "1.0"
     }
